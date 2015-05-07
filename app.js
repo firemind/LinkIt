@@ -61,7 +61,8 @@ app.use(function(err, req, res, next) {
 
 Link = sequelize.define('Link', {
     title: Sequelize.STRING,
-    url: Sequelize.STRING
+    url: Sequelize.STRING,
+    rating: Sequelize.INTEGER
 },{
     tableName: "links"
 });

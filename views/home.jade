@@ -18,7 +18,7 @@ html
                     li(data-id='#{link.id}')
                         .control
                             button(type='button').upvoteButton &#x25B2;
-                            .ranking= link.ranking
+                            .ranking= link.rating
                             button(type='button').downvoteButton &#x25BC;
                         .linkDetails
                             h3= link.title
@@ -26,7 +26,7 @@ html
                             p= link.date
                             p.
                               Created by
-                              #{ User.find(link.UserId).then(function(user){return user.name})}
+                              #{ link.User.name } 
             else
                 li no links
         script(src="/javascripts/jquery-1.11.2.js")

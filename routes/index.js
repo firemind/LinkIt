@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/LinkIt', function(req, res, next) {
-  Link.findAll({include: [User]}).then(function(links) {
+  Link.findAll({include: [{ all: true }]}).then(function(links) {
     res.render('home', { links: links });
   });
 });
@@ -39,6 +39,8 @@ router.post('/links/:id/up', function(req, res, next) {
   Link.find(req.params.id).then(function(link) {
     link.getVotes({ where: 'UserId = '+req.app.current_user.id }).then(function(votes) {
       if(votes.length == 0){
+        link.rating = link.rating + 1;
+        link.save();
         Vote.create({ 
           upvote: true,
           UserId: req.app.current_user.id,
@@ -59,6 +61,8 @@ router.post('/links/:id/down', function(req, res, next) {
   Link.find(req.params.id).then(function(link) {
     link.getVotes({ where: 'UserId = '+req.app.current_user.id }).then(function(votes) {
       if(votes.length == 0){
+        link.rating = link.rating - 1;
+        link.save();
         Vote.create({ 
           upvote: false,
           UserId: req.app.current_user.id,

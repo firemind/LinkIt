@@ -3,6 +3,7 @@ create table if not exists links (
   id serial,
   title varchar(65536),
   url varchar(65536),
+  rating integer not null default 0,
   UserId integer,
   createdAt date,
   updatedAt date
