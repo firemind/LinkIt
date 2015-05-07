@@ -61,10 +61,27 @@ app.use(function(err, req, res, next) {
 
 Link = sequelize.define('Link', {
     title: Sequelize.STRING,
-    url: Sequelize.STRING,
-    user_id: Sequelize.INTEGER
+    url: Sequelize.STRING
 },{
     tableName: "links"
 });
+
+User = sequelize.define('User', {
+    name: Sequelize.STRING,
+    password: Sequelize.STRING
+},{
+    tableName: "users"
+});
+Link.belongsTo(User);
+
+Vote = sequelize.define('Vote', {
+    upvote: Sequelize.BOOLEAN
+},{
+    tableName: "votes"
+});
+Vote.belongsTo(User);
+Vote.belongsTo(Link);
+User.hasMany(Vote);
+Link.hasMany(Vote);
 
 module.exports = app;

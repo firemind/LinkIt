@@ -1,9 +1,33 @@
-extends layout
 
-block content
-  form
-    label(for="new_link") New Link
-    input(name="new_link")
-    input(type="submit", value="Post New Link")
-  h1= title
-  p Welcome to #{title}
+doctype html
+html
+    head
+        title LinkIt
+        link(rel='stylesheet', href='/stylesheets/style.css')
+    body
+        label New Link&nbsp;
+        input(type='text')#linkInput
+        input(type='button' value='Post new Link')#saveLink
+
+        label Login As
+        input(type='text', name="username")#loginInput
+        input(type='button' value='Login')#loginButton
+        ul
+            if links
+                each link, i in links
+                    li(data-id='#{link.id}')
+                        .control
+                            button(type='button').upvoteButton &#x25B2;
+                            .ranking= link.ranking
+                            button(type='button').downvoteButton &#x25BC;
+                        .linkDetails
+                            h3= link.title
+                            p= link.url
+                            p= link.date
+                            p.
+                              Created by
+                              #{ User.find(link.UserId).then(function(user){return user.name})}
+            else
+                li no links
+        script(src="/javascripts/jquery-1.11.2.js")
+        script(src="/javascripts/script.js")
