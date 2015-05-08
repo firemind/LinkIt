@@ -6,19 +6,26 @@ html
         link(rel='stylesheet', href='/stylesheets/style.css')
     body
         label New Link&nbsp;
-        input(type='text')#linkInput
+        input(type='text')#linkNameInput
+        input(type='text')#linkUrlInput
         input(type='button' value='Post new Link')#saveLink
-
-        label Login As
-        input(type='text', name="username")#loginInput
-        input(type='button' value='Login')#loginButton
+        #loginForm
+          if current_user == null
+            label Login As
+            input(type='text', name="username")#loginInput
+            input(type='button' value='Login')#loginButton
+        #userInformation
+          if current_user != null
+            Logged in as
+            = current_user.name
+        input(type='button' value='Logout' class= current_user == null ?'hidden' : '')#logoutButton
         ul
             if links
                 each link, i in links
                     li(data-id='#{link.id}')
                         .control
                             button(type='button').upvoteButton &#x25B2;
-                            .ranking= link.rating
+                            .ranking(id='rating-div-'+link.id)= link.rating
                             button(type='button').downvoteButton &#x25BC;
                         .linkDetails
                             h3= link.title

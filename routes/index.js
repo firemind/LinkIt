@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/LinkIt', function(req, res, next) {
   Link.findAll({include: [{ all: true }]}).then(function(links) {
-    res.render('home', { links: links });
+    res.render('home', { links: links, current_user: req.app.current_user });
   });
 });
 
@@ -31,50 +31,46 @@ router.get('/Links', function(req, res, next) {
   });
 });
 
+router.get('/Links/:id/rating', function(req, res, next) {
+  Link.find(req.params.id).then(function(link) {
+    res.send(''+link.rating);
+  });
+});
+
 router.post('/links/:id/up', function(req, res, next) {
   if(req.app.current_user == undefined){
     res.send("Please log in");
     return;
   }
-  Link.find(req.params.id).then(function(link) {
-    link.getVotes({ where: 'UserId = '+req.app.current_user.id }).then(function(votes) {
-      if(votes.length == 0){
-        link.rating = link.rating + 1;
-        link.save();
-        Vote.create({ 
-          upvote: true,
-          UserId: req.app.current_user.id,
-          LinkId: link.id
-        });
-      }else{
-        res.send("Vote count "+votes.length);
-      }
-    })
-  });
+  doVote(true, req, res);
 });
 
-router.post('/links/:id/down', function(req, res, next) {
+  router.post('/links/:id/down', function(req, res, next) {
   if(req.app.current_user == undefined){
     res.send("Please log in");
     return;
   }
-  Link.find(req.params.id).then(function(link) {
+  doVote(false, req, res);
+});
+
+doVote = function(upvote, req, res){  
+Link.find(req.params.id).then(function(link) {
     link.getVotes({ where: 'UserId = '+req.app.current_user.id }).then(function(votes) {
       if(votes.length == 0){
-        link.rating = link.rating - 1;
+        link.rating += upvote ? 1 : -1;
         link.save();
         Vote.create({ 
-          upvote: false,
+          upvote: upvote,
           UserId: req.app.current_user.id,
           LinkId: link.id
         });
+        res.send("success");
       }else{
         res.send("Vote count "+votes.length);
       }
     })
   });
-
-});
+  }
 
 router.post('/login_as/:username', function(req, res, next) {
   User.find({
@@ -83,8 +79,26 @@ router.post('/login_as/:username', function(req, res, next) {
       }
   }).then(function(user){
     req.app.current_user = user;
+    res.send(user.name);
   });
 });
 
+router.delete('/logout/', function(req, res){
+  req.app.current_user = null;
+  res.end();
+});
 
+router.post('/links/', function(req, res) {
+  if(req.app.current_user != undefined){
+      
+  Link.create({ 
+          url: req.params.linkUrl,
+          title: req.params.linkName,
+          UserId: req.app.current_user.id
+        })
+        .then(function(link){
+          res.render('link', {link: link}); 
+        });
+  }
+});
 module.exports = router;

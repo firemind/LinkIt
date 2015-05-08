@@ -37,3 +37,7 @@ li {
     padding-left: 20px;
     display: inline-block;
 }
+
+.hidden {
+    display: none;
+}

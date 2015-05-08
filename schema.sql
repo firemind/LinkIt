@@ -18,6 +18,7 @@ create table if not exists users (
   updatedAt date
 );
 
+drop table votes;
 create table if not exists votes (
   id serial,
   UserId integer,
