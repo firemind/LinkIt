@@ -5,26 +5,30 @@ html
         title LinkIt
         link(rel='stylesheet', href='/stylesheets/style.css')
     body
-        label New Link&nbsp;
-        input(type='text')#linkNameInput
-        input(type='text')#linkUrlInput
-        input(type='button' value='Post new Link')#saveLink
-        #loginForm
-          if current_user == null
-            label Login As
-            input(type='text', name="username")#loginInput
-            input(type='button' value='Login')#loginButton
-        #userInformation
-          if current_user != null
-            Logged in as
-            = current_user.name
-        input(type='button' value='Logout' class= current_user == null ?'hidden' : '')#logoutButton
-        ul#linkList
-            if links
-                each link, i in links
-                    include linkitem
-                    
-            else
-                li no links
-        script(src="/javascripts/jquery-1.11.2.js")
-        script(src="/javascripts/script.js")
+      #header
+        #newLinkPanel
+          label Link name&nbsp;
+          input(type='text')#linkNameInput
+          br
+          label Link URL&nbsp;
+          input(type='text')#linkUrlInput
+          input(type='button' value='Post new Link')#saveLink
+        #loginForm(class= current_user == null ?'' : 'hidden')
+          label Login As
+          input(type='text', name="username")#loginInput
+          input(type='button' value='Login')#loginButton
+        div
+          #userInformation
+            if current_user != null
+              = 'Logged in as ' + current_user.name
+          input(type='button' value='Logout' class= current_user == null ?'hidden' : '')#logoutButton
+      h1 Links
+      ul#linkList
+        if links
+          each link, i in links
+            include linkitem
+        else
+          li no links
+
+      script(src="/javascripts/jquery-1.11.2.js")
+      script(src="/javascripts/script.js")

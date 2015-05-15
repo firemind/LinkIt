@@ -26,8 +26,8 @@ router.delete('/Links/:id', function(req, res, next) {
 });
 
 router.get('/Links', function(req, res, next) {
-  Link.findAll().then(function(links) {
-    res.send(links[0].title);
+  Link.findAll({include: [{ all: true }]}).then(function(links) {
+    res.render('linkList', { links: links, current_user: req.app.current_user });
   });
 });
 

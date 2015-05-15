@@ -41,3 +41,27 @@ li {
 .hidden {
     display: none;
 }
+
+#header label {
+    width: 100%;
+    display: inline-block;
+}
+
+#userInformation {
+    width: 150px;
+    float: left;
+}
+
+#newLinkPanel {
+    width: 70%;
+    float: left;
+}
+
+#loginForm {
+    width: 30%;
+    float: right;
+}
+
+#header {
+    height: 100px;
+}

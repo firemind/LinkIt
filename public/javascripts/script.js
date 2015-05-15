@@ -40,6 +40,7 @@
           $('#userInformation').html('logged in as '+ res);
           $('#logoutButton').show();
           $('#loginForm').hide()
+          refreshLinks()
         }).error(function() {
           console.log('failed');
         }).always(function() {
@@ -58,6 +59,7 @@
           $('#logoutButton').hide()
           $('#userInformation').html('');
           $('#loginForm').show()
+          refreshLinks()
       })
   }
 
@@ -108,5 +110,20 @@
       console.dir($(event.target))
       deleteLink($(event.currentTarget).attr('data-id'))
   })
+
+  function refreshLinks() {
+    $.ajax(
+        '/links/',
+        {
+          method:'GET'
+        }
+        ).done(function(res) {
+          $('#linkList').replaceWith(res);
+        }).error(function() {
+          console.log('failed');
+        }).always(function() {
+          console.log('fertig');
+        })
+  }
 
 }) (jQuery);
