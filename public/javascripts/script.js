@@ -77,14 +77,36 @@
   }
   
   $('#saveLink').click(function() {
-      createLink($('#linkName').val(), $('#linkUrl').val());
+      createLink($('#linkNameInput').val(), $('#linkUrlInput').val());
   })
   
   function createLink(linkName, linkUrl){
-    $.post('/links/',{linkName: linkName, linkUrl: linkUrl})
+    params = {linkName: linkName, linkUrl: linkUrl};
+    console.dir(params);
+    $.post('/links/',params)
       .done(function(res) {
-        $('#linkList').append(res);
+        prependLink(res)
       })
   }
+
+  function prependLink(rawHtml){
+    $('#linkList').prepend(rawHtml);
+  }
+
+  function deleteLink(id) {
+    $.ajax(
+      '/Links/' + id,
+      {
+         method:'DELETE'
+      }
+      ).done(function(res) {
+        $('li[data-id='+id+']').remove()
+      })
+  }
+
+  $('.deleteButton').click(function(event) {
+      console.dir($(event.target))
+      deleteLink($(event.currentTarget).attr('data-id'))
+  })
 
 }) (jQuery);

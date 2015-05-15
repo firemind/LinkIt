@@ -19,21 +19,11 @@ html
             Logged in as
             = current_user.name
         input(type='button' value='Logout' class= current_user == null ?'hidden' : '')#logoutButton
-        ul
+        ul#linkList
             if links
                 each link, i in links
-                    li(data-id='#{link.id}')
-                        .control
-                            button(type='button').upvoteButton &#x25B2;
-                            .ranking(id='rating-div-'+link.id)= link.rating
-                            button(type='button').downvoteButton &#x25BC;
-                        .linkDetails
-                            h3= link.title
-                            p= link.url
-                            p= link.date
-                            p.
-                              Created by
-                              #{ link.User.name } 
+                    include linkitem
+                    
             else
                 li no links
         script(src="/javascripts/jquery-1.11.2.js")

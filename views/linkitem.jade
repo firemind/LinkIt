@@ -1,0 +1,14 @@
+li(data-id='#{link.id}')
+  .control
+      button(type='button').upvoteButton &#x25B2;
+      .ranking(id='rating-div-'+link.id)= link.rating
+      button(type='button').downvoteButton &#x25BC;
+  .linkDetails
+      h3= link.title
+      p= link.url
+      p= link.date
+      p.
+        Created by
+        #{ link.User.name }
+      if current_user != null && current_user.id == link.UserId
+        button(type='button', data-id='#{link.id}').deleteButton Delete

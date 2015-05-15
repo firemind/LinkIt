@@ -90,14 +90,18 @@ router.delete('/logout/', function(req, res){
 
 router.post('/links/', function(req, res) {
   if(req.app.current_user != undefined){
-      
   Link.create({ 
-          url: req.params.linkUrl,
-          title: req.params.linkName,
+          url: req.body.linkUrl,
+          title: req.body.linkName,
           UserId: req.app.current_user.id
         })
         .then(function(link){
-          res.render('link', {link: link}); 
+          Link.find(link.id).then(function(link) {
+            if(link != null){
+              link.User = req.app.current_user
+              res.render('linkitem', { link: link });
+            }
+          })
         });
   }
 });
