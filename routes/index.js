@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/LinkIt', function(req, res, next) {
   Link.findAll({include: [{ all: true }], order: "id desc"}).then(function(links) {
-    res.render('home', { links: links, current_user: req.app.current_user });
+    res.render('home', { links: links, current_user: req.session.current_user });
   });
 });
 
@@ -27,13 +27,13 @@ router.delete('/Links/:id', function(req, res, next) {
 
 router.get('/Links', function(req, res, next) {
   Link.findAll({include: [{ all: true }], order: "id desc"}).then(function(links) {
-    res.render('linkList', { links: links, current_user: req.app.current_user });
+    res.render('linkList', { links: links, current_user: req.session.current_user });
   });
 });
 
 router.get('/Links/handlebars', function(req, res, next) {
   Link.findAll({include: [{ all: true }], order: "id desc"}).then(function(links) {
-    current_user= req.app.current_user;
+    current_user= req.session.current_user;
     res.send({ links: links.map(function(link){  
       ret = link.asJson;
       ret.showDeleteButton= current_user != null && current_user.id == link.UserId
@@ -50,7 +50,7 @@ router.get('/Links/:id/rating', function(req, res, next) {
 });
 
 router.post('/links/:id/up', function(req, res, next) {
-  if(req.app.current_user == undefined){
+  if(req.session.current_user == undefined){
     res.send("Please log in");
     return;
   }
@@ -58,7 +58,7 @@ router.post('/links/:id/up', function(req, res, next) {
 });
 
   router.post('/links/:id/down', function(req, res, next) {
-  if(req.app.current_user == undefined){
+  if(req.session.current_user == undefined){
     res.send("Please log in");
     return;
   }
@@ -67,13 +67,13 @@ router.post('/links/:id/up', function(req, res, next) {
 
 doVote = function(upvote, req, res){  
 Link.find(req.params.id).then(function(link) {
-    link.getVotes({ where: 'UserId = '+req.app.current_user.id }).then(function(votes) {
+    link.getVotes({ where: 'UserId = '+req.session.current_user.id }).then(function(votes) {
       if(votes.length == 0){
         link.rating += upvote ? 1 : -1;
         link.save();
         Vote.create({ 
           upvote: upvote,
-          UserId: req.app.current_user.id,
+          UserId: req.session.current_user.id,
           LinkId: link.id
         });
         res.send("success");
@@ -90,18 +90,18 @@ router.post('/login_as/:username', function(req, res, next) {
         name: req.params.username
       }
   }).then(function(user){
-    req.app.current_user = user;
+    req.session.current_user = user;
     res.send(user.name);
   });
 });
 
 router.delete('/logout/', function(req, res){
-  req.app.current_user = null;
+  req.session.current_user = null;
   res.end();
 });
 
 router.post('/links/', function(req, res) {
-  if(req.app.current_user != undefined){
+  if(req.session.current_user != undefined){
     var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
     var regex = new RegExp(expression)
     linkName = req.body.linkName;
@@ -110,12 +110,12 @@ router.post('/links/', function(req, res) {
       Link.create({ 
         url: linkUrl,
         title: linkName,
-        UserId: req.app.current_user.id
+        UserId: req.session.current_user.id
       })
       .then(function(link){
         Link.find(link.id).then(function(link) {
           if(link != null){
-            link.User = req.app.current_user
+            link.User = req.session.current_user
             //res.render('linkitem', { link: link });
             ret = link.asJson;
             ret.showDeleteButton= current_user != null && current_user.id == link.UserId

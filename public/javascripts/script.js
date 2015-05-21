@@ -10,6 +10,10 @@
       console.log('downvote');
       vote(this.parentNode.parentNode.dataset.id, 'down');
     })
+    $('.deleteButton').click(function(event) {
+        console.dir($(event.target))
+        deleteLink($(event.currentTarget).attr('data-id'))
+    })
   }
 
   $('#loginButton').click(function() {
@@ -121,10 +125,6 @@
       })
   }
 
-  $('.deleteButton').click(function(event) {
-      console.dir($(event.target))
-      deleteLink($(event.currentTarget).attr('data-id'))
-  })
 
   function refreshLinks() {
     $.ajax(

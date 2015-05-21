@@ -8,14 +8,14 @@ html
   body
     #header
       #newLinkPanel
-        label Link name&nbsp;
-        input(type='text')#linkNameInput
+        label(for="linkNameInput") Link name&nbsp;
+        input(type='text', name="linkNameInput")#linkNameInput
         br
-        label Link URL&nbsp;
-        input(type='text')#linkUrlInput
+        label(for="linkUrlInput") Link URL&nbsp;
+        input(type='text', name="linkUrlInput")#linkUrlInput
         input(type='button' value='Post new Link')#saveLink
       #loginForm(class= current_user == null ?'' : 'hidden')
-        label Login As
+        label(for="username") Login As
         input(type='text', name="username")#loginInput
         input(type='button' value='Login')#loginButton
       div
