@@ -1,34 +1,31 @@
 
 doctype html
 html
-    head
-        title LinkIt
-        link(rel='stylesheet', href='/stylesheets/style.css')
-    body
-      #header
-        #newLinkPanel
-          label Link name&nbsp;
-          input(type='text')#linkNameInput
-          br
-          label Link URL&nbsp;
-          input(type='text')#linkUrlInput
-          input(type='button' value='Post new Link')#saveLink
-        #loginForm(class= current_user == null ?'' : 'hidden')
-          label Login As
-          input(type='text', name="username")#loginInput
-          input(type='button' value='Login')#loginButton
-        div
-          #userInformation
-            if current_user != null
-              = 'Logged in as ' + current_user.name
-          input(type='button' value='Logout' class= current_user == null ?'hidden' : '')#logoutButton
-      h1 Links
-      ul#linkList
-        if links
-          each link, i in links
-            include linkitem
-        else
-          li no links
+  head
+    title LinkIt
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    include linkListHandlebars
+  body
+    #header
+      #newLinkPanel
+        label Link name&nbsp;
+        input(type='text')#linkNameInput
+        br
+        label Link URL&nbsp;
+        input(type='text')#linkUrlInput
+        input(type='button' value='Post new Link')#saveLink
+      #loginForm(class= current_user == null ?'' : 'hidden')
+        label Login As
+        input(type='text', name="username")#loginInput
+        input(type='button' value='Login')#loginButton
+      div
+        #userInformation
+          if current_user != null
+            = 'Logged in as ' + current_user.name
+        input(type='button' value='Logout' class= current_user == null ?'hidden' : '')#logoutButton
+    h1 Links
+    include linkList
 
-      script(src="/javascripts/jquery-1.11.2.js")
-      script(src="/javascripts/script.js")
+    script(src="/javascripts/handlebars.js")
+    script(src="/javascripts/jquery-1.11.2.js")
+    script(src="/javascripts/script.js")

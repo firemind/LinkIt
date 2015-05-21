@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/LinkIt', function(req, res, next) {
-  Link.findAll({include: [{ all: true }]}).then(function(links) {
+  Link.findAll({include: [{ all: true }], order: "id desc"}).then(function(links) {
     res.render('home', { links: links, current_user: req.app.current_user });
   });
 });
@@ -26,8 +26,20 @@ router.delete('/Links/:id', function(req, res, next) {
 });
 
 router.get('/Links', function(req, res, next) {
-  Link.findAll({include: [{ all: true }]}).then(function(links) {
+  Link.findAll({include: [{ all: true }], order: "id desc"}).then(function(links) {
     res.render('linkList', { links: links, current_user: req.app.current_user });
+  });
+});
+
+router.get('/Links/handlebars', function(req, res, next) {
+  Link.findAll({include: [{ all: true }], order: "id desc"}).then(function(links) {
+    current_user= req.app.current_user;
+    res.send({ links: links.map(function(link){  
+      ret = link.asJson;
+      ret.showDeleteButton= current_user != null && current_user.id == link.UserId
+      return ret
+    })});
+        
   });
 });
 
@@ -90,19 +102,28 @@ router.delete('/logout/', function(req, res){
 
 router.post('/links/', function(req, res) {
   if(req.app.current_user != undefined){
-  Link.create({ 
-          url: req.body.linkUrl,
-          title: req.body.linkName,
-          UserId: req.app.current_user.id
+    var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
+    var regex = new RegExp(expression)
+    linkName = req.body.linkName;
+    linkUrl = req.body.linkUrl;
+    if(linkName.length > 0 && linkUrl.match(regex) ){
+      Link.create({ 
+        url: linkUrl,
+        title: linkName,
+        UserId: req.app.current_user.id
+      })
+      .then(function(link){
+        Link.find(link.id).then(function(link) {
+          if(link != null){
+            link.User = req.app.current_user
+            //res.render('linkitem', { link: link });
+            ret = link.asJson;
+            ret.showDeleteButton= current_user != null && current_user.id == link.UserId
+            res.send(ret);
+          }
         })
-        .then(function(link){
-          Link.find(link.id).then(function(link) {
-            if(link != null){
-              link.User = req.app.current_user
-              res.render('linkitem', { link: link });
-            }
-          })
-        });
+      });
+    }
   }
 });
 module.exports = router;

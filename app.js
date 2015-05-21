@@ -64,7 +64,19 @@ Link = sequelize.define('Link', {
     url: Sequelize.STRING,
     rating: Sequelize.INTEGER
 },{
-    tableName: "links"
+    tableName: "links",
+    getterMethods   : {
+      asJson: function(){
+        return {
+          url: this.url,
+          date: this.date,
+          username: this.User.name,
+          id: this.id,
+          rating: this.rating,
+          title: this.title
+        }
+      }
+    }
 });
 
 User = sequelize.define('User', {
@@ -80,6 +92,7 @@ Vote = sequelize.define('Vote', {
 },{
     tableName: "votes"
 });
+
 Vote.belongsTo(User);
 Vote.belongsTo(Link);
 User.hasMany(Vote);

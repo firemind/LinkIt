@@ -1,13 +1,27 @@
 (function ($) {
-  $('.upvoteButton').click(function() {
-    console.log('upvote');
-    vote(this.parentNode.parentNode.dataset.id, 'up');
-  })
+  var source   = $("#handlebars-Template-linkitem").html();
+  var template = Handlebars.compile(source);
+  function bindVoteButtons(){
+    $('.upvoteButton').click(function() {
+      console.log('upvote');
+      vote(this.parentNode.parentNode.dataset.id, 'up');
+    }) 
+    $('.downvoteButton').click(function() {
+      console.log('downvote');
+      vote(this.parentNode.parentNode.dataset.id, 'down');
+    })
+  }
 
-  $('.downvoteButton').click(function() {
-    console.log('downvote');
-    vote(this.parentNode.parentNode.dataset.id, 'down');
+  $('#loginButton').click(function() {
+    loginAs();
   })
+  $('#logoutButton').click(function() {
+    logout();
+  })
+  bindVoteButtons();
+ 
+  setInterval(function(){ refreshLinksH(); }, 5000);
+
   function vote(id,vote) {
     $.ajax(
       '/links/' + id + '/'+ vote,
@@ -22,14 +36,6 @@
         console.log('fertig');
       })
   }
-  $('#loginButton').click(function() {
-    loginAs();
-  })
-
-  $('#logoutButton').click(function() {
-    logout();
-  })
-
   function loginAs() {
     $.ajax(
         '/login_as/' + $("#loginInput").val() ,
@@ -83,16 +89,25 @@
   })
   
   function createLink(linkName, linkUrl){
-    params = {linkName: linkName, linkUrl: linkUrl};
-    console.dir(params);
-    $.post('/links/',params)
-      .done(function(res) {
-        prependLink(res)
-      })
+    var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
+    var regex = new RegExp(expression)
+    if(linkName.length > 0 && linkUrl.match(regex) ){
+      params = {linkName: linkName, linkUrl: linkUrl};
+      console.dir(params);
+      $.post('/links/',params)
+        .done(function(res) {
+          prependLink(res)
+        })
+    }else{
+      alert("Please enter a name and a valid URL");
+    }
   }
 
-  function prependLink(rawHtml){
-    $('#linkList').prepend(rawHtml);
+  function prependLink(res){
+    //$('#linkList').prepend(res);
+    var html = template({links: [res]});
+    $('#linkList').prepend(html);
+    bindVoteButtons();
   }
 
   function deleteLink(id) {
@@ -119,6 +134,25 @@
         }
         ).done(function(res) {
           $('#linkList').replaceWith(res);
+          bindVoteButtons();
+        }).error(function() {
+          console.log('failed');
+        }).always(function() {
+          console.log('fertig');
+        })
+  }
+
+  function refreshLinksH() {
+    $.ajax(
+        '/links/handlebars',
+        {
+          method:'GET'
+        }
+        ).done(function(res) {
+          console.dir(res);
+          var html = template(res);
+          $('#linkList').html(html);
+          bindVoteButtons();
         }).error(function() {
           console.log('failed');
         }).always(function() {
