@@ -1,4 +1,4 @@
-drop table links;
+drop table if exists links;
 create table if not exists links (
   id serial,
   title varchar(65536),
@@ -9,7 +9,7 @@ create table if not exists links (
   updatedAt date
 );
 
-drop table users;
+drop table if exists users;
 create table if not exists users (
   id serial,
   name varchar(65536),
@@ -18,7 +18,7 @@ create table if not exists users (
   updatedAt date
 );
 
-drop table votes;
+drop table if exists votes;
 create table if not exists votes (
   id serial,
   UserId integer,
