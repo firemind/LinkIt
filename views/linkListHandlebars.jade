@@ -1,5 +1,5 @@
 script#handlebars-Template-linkitem(type="text/x-handlebars-template")
-  = "{{#each links}}"
+  | {{#each links}}
   li(data-id='{{id}}')
     .control
       button(type='button').upvoteButton &#x25B2;
@@ -10,7 +10,7 @@ script#handlebars-Template-linkitem(type="text/x-handlebars-template")
       p {{url}}
       p {{date}}
       p Created by {{ username }}
-      = "{{#if showDeleteButton}}"
+      | {{#if showDeleteButton}}
       button(type='button', data-id='{{id}}').deleteButton Delete
-      = "{{/if}}"
-  = "{{/each}}"
+      | {{/if}}
+  | {{/each}}
